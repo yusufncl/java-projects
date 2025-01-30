@@ -5,5 +5,8 @@
 public class Blackjack {
     public static void main(String[] args) {
         
+        BlackjackGame myGame = new BlackjackGame();
+        myGame.startGame();
+        
     }
 }
