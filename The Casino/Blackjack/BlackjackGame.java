@@ -42,15 +42,16 @@ public class BlackjackGame {
         deck = new Deck();
         deck.shuffle();
 
-        for(int i =0; i<numPlayers; i++){
+        for(int i = 0; i < numPlayers; i++) {
             int bet;
-            do{
+            do {
                 System.out.print(players[i].getName() + " place a bet {available balance $: " + players[i].getBalance() + "}: ");
-                bet=scn.nextInt();
+                bet = scn.nextInt();
+                
                 if (!players[i].placeBet(bet)) {
                     System.out.println("Invalid bet. Try again!");
                 }
-            } while(bet <= 0 || bet > players[i].getBalance());
+            } while (bet <= 0 || bet > players[i].getBalance()); 
         }
 
         for (int i =0; i<numPlayers; i++){
@@ -65,8 +66,21 @@ public class BlackjackGame {
 
 
         hitOrStand();
+        endGame();
     }
 
+    public void dealerTurn(){
+        System.out.println("Dealer's turn!");
+
+        while (dealer.getHand().calcTotal() < 17) {
+            dealer.addCard(deck.dealCard());
+            System.out.println("Dealer hits: " + dealer.getHand());
+            System.out.println("Dealer's total: " + dealer.getHand().calcTotal());
+        }
+
+        System.out.println("Dealer stands with hand: " + dealer.getHand());
+    }
+    
 
     public void hitOrStand() {
         for(int i =0; i < numPlayers; i++){
@@ -123,11 +137,38 @@ public class BlackjackGame {
                 players[i].clearHand();
             }
             dealer.clearHand();
-            startGame();
+            startRound();
         } else {
             System.out.println("Thanks for playing!");
         }
+    }
 
+    public void startRound(){
+        for(int i = 0; i < numPlayers; i++) {
+            int bet;
+            do {
+                System.out.print(players[i].getName() + " place a bet {available balance $: " + players[i].getBalance() + "}: ");
+                bet = scn.nextInt();
+                
+                if (!players[i].placeBet(bet)) {
+                    System.out.println("Invalid bet. Try again!");
+                }
+            } while (bet <= 0 || bet > players[i].getBalance()); 
+        }
+
+        for (int i =0; i<numPlayers; i++){
+            players[i].addCard(deck.dealCard());
+            players[i].addCard(deck.dealCard());
+
+        }
+
+        dealer.addCard(deck.dealCard());
+        dealer.addCard(deck.dealCard());
+        dealer.revealFirstCard();
+
+
+        hitOrStand();
+        endGame();
     }
 
 
@@ -135,6 +176,8 @@ public class BlackjackGame {
         int dealerTotal = dealer.getHand().calcTotal();
         System.out.println("\nDealer's final hand: " + dealer.getHand() + " (Total: " + dealerTotal + ")");
         
+        dealerTurn();
+
         if (dealerTotal>21){
             System.out.println("Dealer has busted! All remaining players win!");
         }
@@ -147,15 +190,22 @@ public class BlackjackGame {
 
             if(currPlayer.getHand().isBusted()){
                 System.out.println(currPlayer.getName() + " has busted!");
+                currPlayer.loseBet();
             } else if (dealerTotal > 21){
                 System.out.println(currPlayer.getName() + " wins! Dealer busted.");
+                currPlayer.winBet(false);
             } else if (playerTotal > dealerTotal) {
                 System.out.println(currPlayer.getName() + " wins!");
+                currPlayer.winBet(false);
             } else if ( playerTotal == dealerTotal) {
                 System.out.println(currPlayer.getName() + " pushes with the dealer.");
+                currPlayer.refundBet();
             } else {
                 System.out.println(currPlayer.getName() + " loses.");
+                currPlayer.loseBet();
             }
+
+            System.out.println(currPlayer.getName() + "'s updated balance: $" + currPlayer.getBalance());
         }
 
         for(int i =0; i < numPlayers; i++){
