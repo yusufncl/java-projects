@@ -16,6 +16,14 @@ public class Hand {
         cards.add(card);
     }
 
+    public Card getFirstCard(){
+        if(!cards.isEmpty()){
+            return cards.get(0);
+        } else {
+            return null;
+        }
+    }
+
     public int calcTotal(){
         int total = 0;
         int numberOfAces = 0;
@@ -51,9 +59,14 @@ public class Hand {
             return false;
         }
     }
-
+    
     public void clear(){
         cards.clear();
     }
 
+
+    public String toString() {
+        return cards.toString();  
+    }
+    
 }
