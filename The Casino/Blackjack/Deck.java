@@ -30,4 +30,13 @@ public class Deck {
     public void shuffle(){
         Collections.shuffle(cards);
     }
+
+    public Card dealCard(){
+        if(!cards.isEmpty()){
+            return cards.remove(0);
+        } else {
+            System.out.println("The deck is empty!");
+            return null;
+        }
+    }
 }
