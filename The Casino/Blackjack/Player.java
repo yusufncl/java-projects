@@ -8,7 +8,7 @@ public class Player {
     private int bet;
     private Hand hand;
     
-    public Player(String name, int balance, int bet){
+    public Player(String name, int balance){
         this.name = name;
         this.balance = balance;
         this.bet = 0;
@@ -36,16 +36,35 @@ public class Player {
     }
 
     public boolean placeBet(int amount){
-        if (amount<=0){
+        if(amount > 0 && amount <= balance){
+            bet = amount;
+            balance -= amount;
+            return true;
+        } else {
             return false;
         }
 
-        if (amount > balance){
-            return false;
-        }
-
-        bet = amount;
-        balance -= amount;
-        return true;
     }
+
+    public void addCard(Card card){
+        hand.addCard(card);
+    }
+
+
+
+
+
+    public void winBet(){
+        balance *= 2;
+    }
+
+    public void refundBet(){
+        balance+=bet;
+    }
+
+    public void clearHand() {
+        hand.clear();
+    }
+
+    
 }
