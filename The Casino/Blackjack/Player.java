@@ -39,15 +39,13 @@ public class Player {
         if (bet <= 0) {
             System.out.println("Bet must be greater than 0.");
             return false;
-        } else if (bet > balance) {
+        } 
+        if (bet > balance) {
             System.out.println("Insufficient balance. Your balance is $" + balance + ".");
             return false;
         }
-        if (bet > (balance / 2)){
-            return true;
-        }
-        this.bet = bet;
-        
+    
+        this.bet = bet;  
         System.out.println("Bet placed: $" + bet);
         return true;
     }
@@ -61,23 +59,25 @@ public class Player {
         return bet > 0 && bet <= balance;
     }
 
-    public void winBet(boolean isBlackjack) {
-        if (isBlackjack) {
-            balance += (int) (bet * 1.5);
-            System.out.println(name + " wins with a Blackjack! New balance: $" + balance);
+    public void winBet(boolean blackjack){
+        if(blackjack){
+            balance += bet * 1.5;
         } else {
             balance += bet;
-            System.out.println(name + " wins! New balance: $" + balance);
         }
+        System.out.println("Balance: $" + balance);
+
     }
-    
 
     public void refundBet(){
         balance+=bet;
+        System.out.println("Balance: $" + balance);
     }
 
     public void loseBet(){
         balance -= bet;
+        System.out.println("Balance: $" + balance);
+
     }
 
     public void clearHand() {
