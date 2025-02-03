@@ -48,21 +48,18 @@ public class Player {
             System.out.println("Insufficient balance. Your balance is $" + balance + ".");
             return false;
         }
-        if (bet>(balance/2)){
-            return true;
-        }
 
-        balance -= bet;
         this.bet = bet;
         return true;
     }
+    
 
     public void addCard(Card card){
         hand.addCard(card);
     }
 
     public int getHandSize() {
-        return hand.getCards().size(); // Assuming `hand` is a `Hand` object with a `getCards()` method.
+        return hand.getCards().size(); 
     }
     
 
@@ -75,12 +72,6 @@ public class Player {
         System.out.println("Balance: " + balance);
     }
 
-    public void bust(){
-        balance -= bet;
-        bet = 0;
-        System.out.println("Balance: " + balance);
-
-    }
 
     public void refund(){
         balance+=bet;
@@ -88,25 +79,38 @@ public class Player {
 
     }
 
+    public boolean hasBlackjack() {
+        return hand.getCards().size() == 2 && hand.calcTotal() == 21;
+    }
+    
     public void blackjack(){
-        balance += bet * 2.5;
+        balance += bet * 1.5;
         bet = 0;
         System.out.println("Balance: " + balance);
 
     }
 
-    public void win(){
-        balance += bet*2;
-        bet = 0;
+    public void win() {
+        balance += bet;  
+        bet = 0;  
         System.out.println("Balance: " + balance);
     }
+    
 
-    public void loss(){
-        bet = 0;
+    public void loss() {
+        if (bet > balance) {
+            bet = balance;
+        }
+        balance -= bet; 
+        bet = 0; 
+        if (balance < 0) {
+            balance = 0; 
+        }
         System.out.println("Balance: " + balance);
-
-
     }
+    
+    
+    
 
     public void clearHand() {
         hand.clear();
