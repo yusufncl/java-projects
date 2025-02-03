@@ -21,7 +21,15 @@ public class Card {
         return value;
     }
 
+    // public String toString(){
+    //     return rank + " of " + suit; // fill this line in 
+    // }
+
     public String toString(){
-        return rank + " of " + suit; // fill this line in 
+        return rank + "-" + suit; 
+    }
+    
+    public String getImagePath(){
+        return "./cards/" + toString() + ".png";
     }
 }

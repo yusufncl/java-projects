@@ -18,6 +18,10 @@ public class Dealer {
     public int getHandTotal(){
         return hand.calcTotal();
     }
+    
+    public int getHandSize() {
+        return hand.getHandSize();
+    }    
 
     public boolean isBusted(){
         return hand.isBusted();

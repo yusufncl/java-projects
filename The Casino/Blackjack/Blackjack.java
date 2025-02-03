@@ -7,6 +7,5 @@ public class Blackjack {
         
         BlackjackGame myGame = new BlackjackGame();
         myGame.startGame();
-        
     }
 }

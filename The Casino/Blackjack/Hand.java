@@ -7,9 +7,18 @@ import java.util.ArrayList;
 
 public class Hand {
     private ArrayList<Card> cards;
+    protected Object card;
 
     public Hand() {
         cards = new ArrayList<Card>();
+    }
+
+    public ArrayList<Card> getCards() {
+        return cards;
+    }    
+
+    public int getHandSize() {
+        return cards.size();
     }
 
     public void addCard(Card card){
@@ -31,7 +40,7 @@ public class Hand {
         for(int i = 0; i < cards.size(); i++){
             Card currentCard = cards.get(i);
             total += currentCard.getValue();
-            if (currentCard.getRank().equals("Ace")){
+            if (currentCard.getRank().equals("A")){
                 numberOfAces++;
             }
         }

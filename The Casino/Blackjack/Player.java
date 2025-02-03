@@ -35,6 +35,10 @@ public class Player {
         this.bet = betAmount;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
     public boolean placeBet(int bet) {
         if (bet <= 0) {
             System.out.println("Bet must be greater than 0.");
@@ -44,9 +48,12 @@ public class Player {
             System.out.println("Insufficient balance. Your balance is $" + balance + ".");
             return false;
         }
-    
-        this.bet = bet;  
-        System.out.println("Bet placed: $" + bet);
+        if (bet>(balance/2)){
+            return true;
+        }
+
+        balance -= bet;
+        this.bet = bet;
         return true;
     }
 
@@ -54,29 +61,50 @@ public class Player {
         hand.addCard(card);
     }
 
+    public int getHandSize() {
+        return hand.getCards().size(); // Assuming `hand` is a `Hand` object with a `getCards()` method.
+    }
+    
 
     public boolean canPlaceBet(int bet) {
         return bet > 0 && bet <= balance;
     }
 
-    public void winBet(boolean blackjack){
-        if(blackjack){
-            balance += bet * 1.5;
-        } else {
-            balance += bet;
-        }
-        System.out.println("Balance: $" + balance);
-
+    public void push(){
+        bet = 0;
+        System.out.println("Balance: " + balance);
     }
 
-    public void refundBet(){
-        balance+=bet;
-        System.out.println("Balance: $" + balance);
-    }
-
-    public void loseBet(){
+    public void bust(){
         balance -= bet;
-        System.out.println("Balance: $" + balance);
+        bet = 0;
+        System.out.println("Balance: " + balance);
+
+    }
+
+    public void refund(){
+        balance+=bet;
+        System.out.println("Balance: " + balance);
+
+    }
+
+    public void blackjack(){
+        balance += bet * 2.5;
+        bet = 0;
+        System.out.println("Balance: " + balance);
+
+    }
+
+    public void win(){
+        balance += bet*2;
+        bet = 0;
+        System.out.println("Balance: " + balance);
+    }
+
+    public void loss(){
+        bet = 0;
+        System.out.println("Balance: " + balance);
+
 
     }
 

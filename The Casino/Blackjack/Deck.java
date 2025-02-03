@@ -8,17 +8,18 @@ public class Deck {
 
     public Deck() {
         cards = new ArrayList<Card>();
-        String[] suits = {"Hearts", "Diamonds", "Clubs", "Spades"};
-        String[] ranks = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"};
+
+        String[] ranks = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+        String[] suits = {"C", "D", "H", "S"};
 
         HashMap<String, Integer> values = new HashMap<>();  
         for(int i = 2; i<=10; i++) {
             values.put(String.valueOf(i), i);
         }
-        values.put("Jack", 10);
-        values.put("Queen", 10);
-        values.put("King", 10);
-        values.put("Ace", 11);
+        values.put("J", 10);
+        values.put("Q", 10);
+        values.put("K", 10);
+        values.put("A", 11);
 
         for(int i = 0; i < suits.length; i++){
             for(int j =0; j < ranks.length; j++) {
