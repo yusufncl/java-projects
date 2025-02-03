@@ -1,4 +1,9 @@
 import java.util.Scanner;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+
 
 public class BlackjackGame {
 
@@ -8,11 +13,70 @@ public class BlackjackGame {
     private Dealer dealer = new Dealer();
     private Deck deck;
 
+    int boardWidth = 600;
+    int boardHeight = boardWidth;
+
+    int cardWidth = 110;
+    int cardHeight = 154;
+
+    JFrame frame = new JFrame("Blackjack");
+    JPanel gamePanel = new JPanel(){
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            try {
+                //draw hidden card
+                Image hiddenCardImg = new ImageIcon(getClass().getResource("./cards/BACK.png")).getImage();
+                g.drawImage(hiddenCardImg, 20, 20, cardWidth, cardHeight, null);
+
+                // draw dealer's hand
+                int dealerHandSize = dealer.getHandSize();
+                for (int i = 0; i < dealerHandSize; i++) {
+                    Card card = dealer.getHand().getCards().get(i);
+                    Image cardImg = new ImageIcon(getClass().getResource(card.getImagePath())).getImage();
+                    g.drawImage(cardImg, cardWidth + 25 + (cardWidth + 5)*i, 20, cardWidth, cardHeight, null);
+                }
+
+                // Draw all players' hands 
+                int yOffset = 180; 
+                
+                for (int p = 0; p < numPlayers; p++) {
+                    Player player = players[p];
+                    int playerHandSize = player.getHandSize();
+
+                    // Draw player's name
+                    g.setColor(Color.WHITE);
+                    g.setFont(new Font("Arial", Font.BOLD, 14));
+                    g.drawString(player.getName(), 20, yOffset - 10);
+
+                    // Draw player's hand
+                    for (int i = 0; i < playerHandSize; i++) {
+                        Card card = player.getHand().getCards().get(i);
+                        Image cardImg = new ImageIcon(getClass().getResource(card.getImagePath())).getImage();
+                        g.drawImage(cardImg, 20 + (cardWidth + 5) * i, yOffset, cardWidth, cardHeight, null);
+                    }
+
+                    yOffset += cardHeight + 20; 
+                }
+
+
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
+    JPanel buttonPanel = new JPanel();
+    JButton hitButton = new JButton("Hit");
+    JButton standButton = new JButton("Stand");
+
 
     public BlackjackGame(){
         dealer = new Dealer();
         deck = new Deck();
     }
+
+    
 
     public int getNumPlayers(){
         return numPlayers;
@@ -24,7 +88,22 @@ public class BlackjackGame {
 
     public void startGame() {
         System.out.println("WELCOME TO BLACKJACK");
+        frame.setVisible(true);
+        frame.setSize(boardWidth, boardHeight);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
+        gamePanel.setLayout(new BorderLayout());    
+        gamePanel.setBackground(new Color(53, 101, 77));
+        frame.add(gamePanel);
+
+        hitButton.setFocusable(false);
+        buttonPanel.add(hitButton);
+        standButton.setFocusable(false);
+        buttonPanel.add(standButton);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
 
         do { 
             System.out.print("Enter the number of players 1-4: ");
@@ -45,7 +124,7 @@ public class BlackjackGame {
         for(int i = 0; i < numPlayers; i++) {
             int bet;
             do {
-                System.out.print(players[i].getName() + " place a bet {available balance $: " + players[i].getBalance() + "}: ");
+                System.out.print(players[i].getName() + " place a bet {available balance $ " + players[i].getBalance() + "}: ");
                 bet = scn.nextInt();
                 
                 if (!players[i].placeBet(bet)) {
@@ -78,7 +157,7 @@ public class BlackjackGame {
             System.out.println("Dealer's total: " + dealer.getHand().calcTotal());
         }
 
-        System.out.println("Dealer stands with hand: " + dealer.getHand());
+        System.out.println("\nDealer's final hand: " + dealer.getHand() + " (Total: " + dealer.getHandTotal() + ")");
     }
     
 
@@ -94,7 +173,7 @@ public class BlackjackGame {
             }
             String choice;
             do{ 
-                System.out.println(currPlayer.getName() + ", would you like to hit or stand? (h/s): ");
+                System.out.print(currPlayer.getName() + ", would you like to hit or stand? (h/s): ");
                 choice = scn.next();
     
                 if(choice.equals("h")){
@@ -127,7 +206,7 @@ public class BlackjackGame {
     }
 
     public void playAgain() {   
-        System.out.println("Do you want to play again {Y|N}: ");
+        System.out.print("Do you want to play again {Y|N}: ");
         String choice = scn.next().toUpperCase();
 
         if(choice.equals("Y")){
@@ -140,6 +219,7 @@ public class BlackjackGame {
             startRound();
         } else {
             System.out.println("Thanks for playing!");
+            System.exit(0);
         }
     }
 
@@ -171,48 +251,54 @@ public class BlackjackGame {
         endGame();
     }
 
+    // private void kickBrokePlayers(){
+    //     int remainingPlayers = 0;
+    //     Player[] remaining = new Player[numPlayers];
+
+    //     for(int i=0; i < numPlayers; i++){
+    //         if(players[i].getBalance() >= 0){
+    //             remaining[remainingPlayers++] = players[i];
+    //         } else {
+    //             System.out.println(players[i].getName() + "has gone broke and been kicked out of the casino!");
+    //         }
+    //     }
+
+    //     players = new Player[remainingPlayers];
+    //     System.arraycopy(remaining, 0, players, 0, remainingPlayers);
+    //     numPlayers = remainingPlayers;
+    // }
 
     public void endGame() {
         int dealerTotal = dealer.getHand().calcTotal();
-        System.out.println("\nDealer's final hand: " + dealer.getHand() + " (Total: " + dealerTotal + ")");
-        
         dealerTurn();
-
-        if (dealerTotal>21){
-            System.out.println("Dealer has busted! All remaining players win!");
-        }
-        
-        for(int i=0; i<numPlayers; i++){
+        for(int i =0; i < numPlayers; i++){
             Player currPlayer = players[i];
             int playerTotal = currPlayer.getHand().calcTotal();
+            String playerName = currPlayer.getName();
 
-            System.out.println(currPlayer.getName() +  " 's hand: " + currPlayer.getHand() + " (Total: " + playerTotal +")");
+            System.out.println(currPlayer.getName() + "'s hand: " + currPlayer.getHand() + " (Total: " + playerTotal + ")");
 
-            if(currPlayer.getHand().isBusted()){
-                System.out.println(currPlayer.getName() + " has busted!");
-                currPlayer.loseBet();
-            } else if (dealerTotal > 21){
-                System.out.println(currPlayer.getName() + " wins! Dealer busted.");
-                currPlayer.winBet(false);
-            } else if (playerTotal > dealerTotal) {
-                System.out.println(currPlayer.getName() + " wins!");
-                currPlayer.winBet(false);
-            } else if ( playerTotal == dealerTotal) {
-                System.out.println(currPlayer.getName() + " pushes with the dealer.");
-                currPlayer.refundBet();
-            } else {
-                System.out.println(currPlayer.getName() + " loses.");
-                currPlayer.loseBet();
+
+            if(playerTotal > 0){
+                if(playerTotal > 21){
+                    System.out.println(playerName + " has busted");
+                    currPlayer.bust(); 
+                } else if (playerTotal == dealerTotal){
+                    System.out.println(playerName + " has pushed");
+                    currPlayer.push();
+                } else if (playerTotal < dealerTotal && dealerTotal <= 21){
+                    System.out.println(playerName + " has lost!");
+                    currPlayer.loss();
+                } else if (playerTotal == 21) { 
+                    System.out.println(playerName + " has won with blackjack!");
+                    currPlayer.blackjack();
+                } else { 
+                    System.out.println(playerName + " has won!");
+                    currPlayer.win();
+                }
             }
-
-            System.out.println(currPlayer.getName() + "'s updated balance: $" + currPlayer.getBalance());
+            playAgain();
         }
-
-        for(int i =0; i < numPlayers; i++){
-            players[i].clearHand();
-        }
-        dealer.clearHand();
-
-        playAgain();
     }
+    
 }
